@@ -1,6 +1,6 @@
 {
-  "name": "@tfk-samf/figma-to-dtcg",
-  "version": "0.4.4",
+  "name": "@mimir/figma-to-dtcg",
+  "version": "0.0.1",
   "description": "Parse Figma Variables Plugin API and REST API into design tokens.",
   "files": [
     "dist"
@@ -9,28 +9,18 @@
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "default": "./dist/index.js",
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     }
   },
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint --ext .ts,.tsx .",
-    "lint:fix": "eslint --ext .ts,.tsx --fix ."
-  },
-  "eslintConfig": {
-    "extends": "../../.eslintrc"
+    "build": "tsc"
   },
   "devDependencies": {
-    "@figma/plugin-typings": "^1.97.0",
-    "@figma/rest-api-spec": "^0.16.0",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
-    "eslint": "^8.54.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.29.1",
-    "typescript": "^5.3.2"
+    "@figma/plugin-typings": "^1.138.0",
+    "@figma/rest-api-spec": "^0.42.0",
+    "typescript": "^7.0.2"
   },
   "gitHead": "e114c205f92c7a9f9978d0e79e66f34dd3eb0b0b"
 }

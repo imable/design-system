@@ -4,9 +4,7 @@
     "compilerOptions": {
         "declaration": true,
         "outDir": "dist",
-        "typeRoots": [
-            "../../node_modules/@figma"
-        ],
+        "types": ["@figma/plugin-typings"],
         // Override default monorepo behaviour since we are not using Vite
         "noEmit": false,
         "allowImportingTsExtensions": false,

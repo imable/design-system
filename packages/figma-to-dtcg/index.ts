@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import {
   RGB, RGBA,
   LocalVariableCollection, VariableValue, LocalVariable, VariableAlias, GetLocalVariablesResponse,
@@ -46,11 +44,11 @@ type OptionalExcept<T, K extends keyof T> = Pick<T, K> & Partial<T>
 export type DesignTokenType = 'color' | 'number' | 'fontFamily' | 'boolean'
 export type FigmaTokenType = LocalVariable['resolvedType']
 export type DesignToken = {
-  type: DesignTokenType
-  value: string | number | boolean | RGB | CompositeToken
-  prefix: string
+  $type: DesignTokenType
+  $value: string | number | boolean | RGB | CompositeToken
+  $description: string
 }
-export interface CompositeToken { [key: string]: DesignToken['value'] }
+export interface CompositeToken { [key: string]: DesignToken['$value'] }
 export type Token = DesignToken | CompositeToken
 
 export type Tree = Token | { [key: string]: Tree };
@@ -74,7 +72,7 @@ const defaultOptions: typeof globalOptions = {
   typeMap: {
     COLOR: () => 'color',
     FLOAT: () => 'number',
-    STRING: () => 'fontFamily',
+    STRING: () => 'string',
     BOOLEAN: () => 'boolean',
   },
 };
@@ -170,7 +168,7 @@ async function valueToJSON(
   name: string,
   value: VariableValue,
   type: LocalVariable['resolvedType'],
-): Promise<DesignToken['value'] | undefined> {
+): Promise<DesignToken['$value'] | undefined> {
   const isAlias = (
     v: VariableValue,
   ): v is VariableAlias => !!(v as VariableAlias).type && !!(v as VariableAlias).id;
@@ -183,7 +181,7 @@ async function valueToJSON(
     { name: _name }: LocalVariable,
   ): boolean => !!_name.match(/^[A-Za-z]+\/\d+\/Background$/);
 
-  let _value: DesignToken['value'];
+  let _value: DesignToken['$value'];
 
   // If the variable is a reference to another variable
   if (isAlias(value)) {
@@ -229,19 +227,6 @@ async function valueToJSON(
 }
 
 /**
- * Creates the prefix for a specific collection. Design tokens will be prefixed with this.
- *
- * @param collection Name of the current collection
- * @returns Sanitized name of the collection to be prefixed on the variable name
- */
-function makePrefix(
-  collection: string,
-) {
-  const prefix = sanitizeName(collection);
-  return prefix === 'theme' ? 'color' : prefix;
-}
-
-/**
  * Converts a collection to Design Token (W3C) standard
  *
  * @param collection The variable collection to export
@@ -254,7 +239,6 @@ async function collectionAsJSON(
   const { idToKey, keyToId } = uniqueKeyIdMaps(modes, 'modeId');
   const modeKeys = Object.values(idToKey);
   const isMultiMode = modeKeys.length > 1;
-  const collectionPrefix = makePrefix(collectionName);
 
   // Add nesting for each mode if we have multiple
   if (isMultiMode) {
@@ -269,6 +253,7 @@ async function collectionAsJSON(
       resolvedType,
       valuesByMode,
       remote,
+      description
     } = (await getVariableById(variableId))!;
 
     if (remote) {
@@ -300,9 +285,9 @@ async function collectionAsJSON(
           obj = obj[groupName];
         });
 
-        obj.value = objValue;
-        obj.type = globalOptions.typeMap[resolvedType](sanitizeName(collectionName));
-        obj.prefix = collectionPrefix;
+        obj.$value = objValue;
+        obj.$type = globalOptions.typeMap[resolvedType](sanitizeName(collectionName));
+        obj.$description = description;
       }
     }
   }

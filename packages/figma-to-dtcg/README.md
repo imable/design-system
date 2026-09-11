@@ -12,7 +12,7 @@ Import the package into your script and provide the necessary options.
 Configure your [Figma plugin with typings](https://www.figma.com/plugin-docs/api/typings/) and pass the Figma client to the composable.
 
 ```ts
-import { useFigmaToDTCG } from '@tfk-samf/figma-to-dtcg';
+import { useFigmaToDTCG } from '@mimir/figma-to-dtcg';
 
 const { tokens } = await useFigmaToDTCG({
     api: "plugin",
@@ -23,7 +23,7 @@ const { tokens } = await useFigmaToDTCG({
 ### Using the Figma Variables Rest API
 
 ```ts
-import { useFigmaToDTCG } from "@tfk-samf/figma-to-dtcg"
+import { useFigmaToDTCG } from "@mimir/figma-to-dtcg"
 import { GetLocalVariablesResponse } from "@figma/rest-api-spec"
 
 const response = await fetch("https://api.figma.com/v1/files/:file_key/variables/local", {

@@ -4,7 +4,7 @@
  * https://github.com/jake-figma/figma-token-json
  *
  */
-import { useFigmaToDTCG } from '@tfk-samf/figma-to-dtcg';
+import { useFigmaToDTCG } from '@mimir/figma-to-dtcg';
 
 console.clear();
 console.log('------------------- Console cleared by Design Tokens (W3C) Export -------------------');

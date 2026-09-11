@@ -1,5 +1,5 @@
 {
-  "name": "@tfk-samf/figma-dtcg-plugin",
+  "name": "@mimir/figma-dtcg-plugin",
   "version": "0.3.3",
   "private": "true",
   "description": "Exports Figma variables.",
@@ -9,28 +9,18 @@
     "build": "npm run build:ui && npm run build:main -- --minify",
     "build:main": "esbuild ./src/index.ts --target=es2017 --bundle --outfile=dist/index.js",
     "build:ui": "vite build --minify esbuild --emptyOutDir=false",
-    "lint": "eslint --ext .ts,.tsx --ignore-pattern node_modules .",
-    "lint:fix": "eslint --ext .ts,.tsx --ignore-pattern node_modules --fix .",
     "watch": "npm run build -- --watch"
   },
   "author": "",
   "license": "",
   "dependencies": {
-    "@tfk-samf/figma-to-dtcg": "^0.4.2"
+    "@mimir/figma-to-dtcg": "workspace:*"
   },
   "devDependencies": {
-    "@figma/eslint-plugin-figma-plugins": "*",
     "@figma/plugin-typings": "*",
-    "@typescript-eslint/eslint-plugin": "^6.12.0",
-    "@typescript-eslint/parser": "^6.12.0",
-    "esbuild": "^0.28.0",
-    "eslint": "^8.54.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "typescript": "^5.3.2",
-    "vite": "^8.0.10",
-    "vite-plugin-singlefile": "^2.0.2"
-  },
-  "eslintConfig": {
-    "extends": "../../.eslintrc"
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vite-plugin-singlefile": "^2.3.3"
   }
 }
