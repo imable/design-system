@@ -1,0 +1,25 @@
+{
+  "name": "@mimir/tokens-to-variables",
+  "version": "0.0.1",
+  "description": "Parse Figma Variables Plugin API and REST API into design tokens.",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+  },
+  "devDependencies": {
+    "@mimir/figma-to-dtcg": "workspace:*",
+    "typescript": "^7.0.2",
+    "style-dictionary": "^5.5.3"
+  },
+  "gitHead": "e114c205f92c7a9f9978d0e79e66f34dd3eb0b0b"
+}

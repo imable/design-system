@@ -4,8 +4,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
     <script>
         onmessage = (event) => {
-            const { type, contents, raw } = event.data.pluginMessage;
-            
+            const {
+                type, contents, raw, ok, summary, error,
+            } = event.data.pluginMessage;
+
             if (type === 'download-zip') {
                 var zip = new JSZip();
 
@@ -15,9 +17,9 @@
 
                 zip.generateAsync({ type: "blob" }).then((b) => {
                     const url = URL.createObjectURL(b);
-        
+
                     document.getElementById("raw").innerHTML = raw
-        
+
                     const a = document.createElement('a');
                     a.href = url;
                     a.download = `tokens.zip`;
@@ -26,7 +28,37 @@
                     document.body.removeChild(a);
                 })
             }
+
+            if (type === 'import-result') {
+                const status = document.getElementById('import-status');
+                if (ok) {
+                    const aliasNote = summary.skippedAliases.length
+                        ? ` Skipped unresolved aliases: ${summary.skippedAliases.join(', ')}.`
+                        : '';
+                    status.textContent = `Created ${summary.createdCollections} collection(s), `
+                        + `${summary.createdVariables} new variable(s), `
+                        + `updated ${summary.updatedVariables} variable(s).${aliasNote}`;
+                } else {
+                    status.textContent = `Import failed: ${error}`;
+                }
+            }
         };
+
+        function importTokens() {
+            const status = document.getElementById('import-status');
+            const raw = document.getElementById('import-json').value;
+
+            let tokens;
+            try {
+                tokens = JSON.parse(raw);
+            } catch (e) {
+                status.textContent = `Invalid JSON: ${e.message}`;
+                return;
+            }
+
+            status.textContent = 'Importing...';
+            parent.postMessage({ pluginMessage: { type: 'import-tokens', tokens } }, '*');
+        }
 
         parent.postMessage({ pluginMessage: { type: 'ready' } }, '*');
     </script>
@@ -39,6 +71,14 @@
         </summary>
         <pre id="raw"></pre>
     </details>
+
+    <hr>
+
+    <h3>Import Design Tokens (W3C)</h3>
+    <textarea id="import-json" rows="10" style="width: 100%; box-sizing: border-box;" placeholder="Paste Design Tokens (W3C) JSON here"></textarea>
+    <br>
+    <button onclick="importTokens()">Import into Figma</button>
+    <pre id="import-status"></pre>
 </body>
 </html>
 

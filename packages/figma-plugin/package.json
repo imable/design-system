@@ -1,0 +1,29 @@
+{
+  "name": "@mimir/figma-plugin",
+  "version": "0.1.0",
+  "private": "true",
+  "description": "Exports Figma variables as W3C Design Tokens and syncs them to GitHub via automated Pull Requests.",
+  "main": "dist/code.js",
+  "type": "module",
+  "scripts": {
+    "build": "npm run build:ui && npm run build:main -- --minify",
+    "build:main": "esbuild ./src/main/code.ts --target=es2017 --bundle --outfile=dist/code.js",
+    "build:ui": "vite build --minify esbuild --emptyOutDir=false",
+    "watch": "npm run build -- --watch"
+  },
+  "author": "",
+  "license": "",
+  "dependencies": {
+    "@mimir/figma-to-dtcg": "workspace:*",
+    "pinia": "^4.0.3",
+    "vue": "^3.5.42"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "*",
+    "@vitejs/plugin-vue": "^6.0.9",
+    "esbuild": "^0.28.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.0",
+    "vite-plugin-singlefile": "^2.3.3"
+  }
+}
