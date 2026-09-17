@@ -35,9 +35,15 @@ export type PluginAPIProps = {
   client: PluginAPI
 }
 
-export type Options<Collection> = {
+export type Options<Collection, Themes extends string = string> = {
   verbosity?: 'silent' | 'verbose',
   typeMap?: Record<FigmaTokenType, (category: Collection) => string>
+  /**
+   * Which theme modes to include in the output. Defaults to 'ALL'.
+   * Only applies to modes named after a theme (or `${theme}_${variant}`,
+   * see `VariantCollections`) - collections with a single mode are unaffected.
+   */
+  modes?: 'ALL' | Themes[]
 }
 
 type OptionalExcept<T, K extends keyof T> = Pick<T, K> & Partial<T>
@@ -66,7 +72,7 @@ export type Tokens<
     [vc in VariantCollections]?: { [theme in `${Themes}_${Variants}`]?: Tree }
   }
 
-let globalOptions: Required<Options<any>>;
+let globalOptions: Required<Options<any, any>>;
 const defaultOptions: typeof globalOptions = {
   verbosity: 'silent',
   typeMap: {
@@ -75,6 +81,7 @@ const defaultOptions: typeof globalOptions = {
     STRING: () => 'string',
     BOOLEAN: () => 'boolean',
   },
+  modes: 'ALL'
 };
 const isVerbose = () => globalOptions.verbosity === 'verbose';
 
@@ -129,6 +136,25 @@ function roundFloat(float: number, precision = 6): number {
  */
 function isPrivate(collection: string) {
   return collection.startsWith('_');
+}
+
+/**
+ * Checks if a (sanitized) mode name belongs to one of the themes selected
+ * via `Options.modes`. Matches modes named after a theme directly (as on
+ * `InvariantCollections`) or prefixed with `${theme}_` (as on
+ * `VariantCollections`, named `${theme}_${variant}`).
+ *
+ * @param mode Sanitized name of the mode
+ * @returns True if the mode should be included in the output
+ */
+function isModeSelected(mode: string) {
+  if (globalOptions.modes === 'ALL') return true;
+  console.log(mode, globalOptions.modes, globalOptions.modes.some(
+    (theme: string) => mode === theme || mode.startsWith(`${theme}_`),
+  ))
+  return globalOptions.modes.some(
+    (theme: string) => mode === theme || mode.startsWith(`${theme}_`),
+  );
 }
 
 /**
@@ -247,8 +273,13 @@ async function collectionAsJSON(
 ) {
   const collection: Record<string, Tree> = {};
   const { idToKey, keyToId } = uniqueKeyIdMaps(modes, 'modeId');
-  const modeKeys = Object.values(idToKey);
-  const isMultiMode = modeKeys.length > 1;
+  const isMultiMode = Object.values(idToKey).length > 1;
+  // Only filter by selected themes when there is more than one mode to choose
+  // from - a collection with a single mode (e.g. a `SharedCollections` entry)
+  // doesn't vary by theme, so its mode is always kept.
+  const modeKeys = isMultiMode
+    ? Object.values(idToKey).filter(isModeSelected)
+    : Object.values(idToKey);
 
   // Add nesting for each mode if we have multiple
   if (isMultiMode) {
@@ -342,12 +373,12 @@ async function useFigmaToDTCG<
   VariantCollections extends string = any
 >(
   props: RestAPIProps | PluginAPIProps,
-  options?: Options<SharedCollections | InvariantCollections | VariantCollections>,
+  options?: Options<SharedCollections | InvariantCollections | VariantCollections, Themes>,
 ) {
   globalOptions = {
     ...defaultOptions,
     ...options,
-  } as Required<Options<SharedCollections | InvariantCollections | VariantCollections>>;
+  } as Required<Options<SharedCollections | InvariantCollections | VariantCollections, Themes>>;
 
   const isRestApiEnv = (p: typeof props): p is RestAPIProps => p.api === 'rest';
 

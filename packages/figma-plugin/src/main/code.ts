@@ -144,8 +144,11 @@ async function exportTokensForMappings(
   if (mappings.length === 0) return { results, errors };
 
   try {
-    const { tokens } = await useFigmaToDTCG({ api: 'plugin', client: figma });
     const allModeNames = mappings.map((m) => m.modeName);
+    const { tokens } = await useFigmaToDTCG(
+      { api: 'plugin', client: figma },
+      { modes: allModeNames.map(sanitizeName) },
+    );
 
     mappings.forEach((mapping) => {
       results.push({
